@@ -1,38 +1,49 @@
-const app = require('express')()
-const net = require('net')
+const express = require('express')
+const app = express()
 const http = require('http')
 const server = http.createServer(app)
-const crypto = require('crypto')
 const { WebSocketServer } = require('ws')
+const path = require('path')
 
 const ws = new WebSocketServer({ server })
 
 let clients = []
 
-const SOCKET_MAGIC_STRING = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+// https://stackoverflow.com/questions/69378155/is-it-possible-to-make-a-video-call-over-websocket-on-the-web-without-using-webr
+
+app.use(express.static(path.join(__dirname, 'static')));
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/html/index.html')
+    res.sendFile(__dirname + '/static/index.html')
 })
 
-
-ws.on('connection', (socket) => {
+ws.on('connection', (socket, req) => {
+    // requested url by socket
+    let url = req.url
     clients.push(socket)
-    console.log('connected')
 
-    clients.forEach((client) => { client.send('BARRRYYYY') })
+    // clients.forEach((client) => { client.send('BARRRYYYY') })
 
-    socket.on('message', (message) => {
-        if (!message instanceof Buffer) {
-            throw new Error('Message was not a buffer')
-        }
+    /** @todo extract into different controller classes */
+    // video responses
+    if (url === '/') {
+        socket.on('open', (data) => {
+            console.log(JSON.stringify(data))
+        })
 
-        // sendAll(message.toString())
-        // console.log(message.data.message)
-        let data = JSON.parse(message.toString())
-        console.log(data)
-        sendAll(message)
-    })
+        socket.on('message', (message) => {
+            if (!message instanceof Buffer) {
+                throw new Error('Message was not a buffer')
+            }
+
+            // sendAll(message.toString())
+            // console.log(message.data.message)
+            // let data = JSON.parse(message.toString())
+            let data = message.toString()
+            console.log(data)
+            sendAll(message)
+        })
+    }
 })
 
 const sendAll = (msg) => {
