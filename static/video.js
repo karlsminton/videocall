@@ -4,21 +4,18 @@ const constraints = {
 }
 
 const mime = "video/webm;codecs=opus, vp8"
-
 const mediaRecorderOptions = {
     mimeType: mime,
     bitsPerSecond: 5000
 }
 
+
 let url = new URL('ws://localhost:3000/')
 let websocket = new WebSocket(url)
-
 let button = document.querySelector('button')
-let main = document.querySelector('main')
-
 let video, mediaRecorder
-
 window.externalMediaSource = new MediaSource()
+let startAccepting = false
 
 button.addEventListener('click', (e) => {
     if (
@@ -27,9 +24,11 @@ button.addEventListener('click', (e) => {
     ) {
         navigator.mediaDevices.getUserMedia(constraints)
             .then((stream) => {
+                startAccepting = true
                 window.stream = stream
                 mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions)
                 mediaRecorder.ondataavailable = (e) => {
+                    // console.log(e.data)
                     websocket.send(e.data)
                     // don't remove - useful debugging values
                     // console.log(`media recorder data - ${e.data}`)
@@ -42,8 +41,13 @@ button.addEventListener('click', (e) => {
 })
 
 websocket.onmessage = (e) => {
+    console.log(`can accept? ${startAccepting}`)
+    if (startAccepting !== true) {
+        return
+    }
+
     let blob = e.data
-    console.log(blob)
+    // console.log(blob)
 
     window.secondVideo = document.createElement('video')
     window.secondVideo.id = 'second'
