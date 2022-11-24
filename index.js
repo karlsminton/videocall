@@ -37,13 +37,11 @@ ws.on('connection', (socket, req) => {
     })
     console.log('')
 
+    
+
     /** @todo extract into different controller classes */
     // video responses
     if (url === '/') {
-        socket.on('open', (data) => {
-            console.log(JSON.stringify(data))
-        })
-
         socket.on('message', (message) => {
             if (!message instanceof Buffer) {
                 throw new Error('Message was not a buffer')
