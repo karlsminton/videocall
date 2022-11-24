@@ -1,0 +1,38 @@
+html {
+    background-color: #353239;
+}
+
+body {
+    margin: 0;
+    color: #e6e2eb;
+}
+
+h1 {
+    margin: 20px;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+}
+
+section {
+    padding: 15px;
+}
+
+main > .vid {
+    flex-grow: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+    border-radius: 20px;
+    /*
+    maybe reinstate this later - for now just match the video frame size
+    height: auto; 
+    */
+    height: 480px;
+}

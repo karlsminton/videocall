@@ -48,6 +48,10 @@ websocket.onmessage = (e) => {
     window.secondVideo = document.createElement('video')
     window.secondVideo.id = 'second'
     window.secondVideo.setAttribute('muted', '')
+
+    let container = document.createElement('div')
+    container.className = 'vid'
+
     window.secondVideo.srcObject = window.externalMediaSource.handle
     window.secondVideo.src = URL.createObjectURL(window.externalMediaSource)
     
@@ -67,24 +71,26 @@ websocket.onmessage = (e) => {
         blob.arrayBuffer().then((arrayBuffer) => {
             window.externalSourceBuffer.appendBuffer(arrayBuffer)
         })
-    } 
-    else {
-        // If this is hit then no sourceBuffer is available and streaming will fail
-        console.log('Absolutely fucked')
     }
 
     if (!document.getElementById('second')) {
+        container.appendChild(window.secondVideo)
+        document.querySelector('main').appendChild(container)
         window.secondVideo.play()
-        document.querySelector('main').appendChild(window.secondVideo)
     }
 }
 
 const addVideoToPage = (stream) => {
+    let container = document.createElement('div')
+    container.className = 'vid'
+
     video = document.createElement('video')
+    video.id = 'self'
     video.srcObject = stream
     video.onloadedmetadata = (e) => {
+        container.appendChild(video)
+        document.querySelector('main').appendChild(container)
         video.play()
-        document.querySelector('main').appendChild(video)
     }
 }
 

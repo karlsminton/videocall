@@ -18,11 +18,10 @@ app.get('/', (req, res) => {
 })
 
 ws.on('connection', (socket, req) => {
+    console.log(`req.socket.remoteAddress - ${req.socket.remoteAddress}`)
     // requested url by socket
     let url = req.url
     clients.push(socket)
-
-    // clients.forEach((client) => { client.send('BARRRYYYY') })
 
     /** @todo extract into different controller classes */
     // video responses
@@ -36,11 +35,6 @@ ws.on('connection', (socket, req) => {
                 throw new Error('Message was not a buffer')
             }
 
-            // sendAll(message.toString())
-            // console.log(message.data.message)
-            // let data = JSON.parse(message.toString())
-            let data = message.toString()
-            console.log(data)
             sendAll(message)
         })
     }
