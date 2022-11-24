@@ -28,8 +28,10 @@ button.addEventListener('click', (e) => {
                 window.stream = stream
                 mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions)
                 mediaRecorder.ondataavailable = (e) => {
-                    // console.log(e.data)
-                    websocket.send(e.data)
+                    if (websocket.readyState === WebSocket.OPEN) {
+                        // console.log(e.data)
+                        websocket.send(e.data)
+                    }
                     // don't remove - useful debugging values
                     // console.log(`media recorder data - ${e.data}`)
                     // console.log(`websocket bufferAmount = ${websocket.bufferedAmount}`)
@@ -41,6 +43,10 @@ button.addEventListener('click', (e) => {
 })
 
 websocket.onmessage = (e) => {
+    acceptVideo(e)
+}
+
+const acceptVideo = (e) => {
     console.log(`can accept? ${startAccepting}`)
     if (startAccepting !== true) {
         return
