@@ -39,7 +39,6 @@ ws.on('connection', (socket, req) => {
     /** @todo extract into different controller classes */
     if (url === '/') {
         socket.on('message', (message) => {
-            console.log(message)
             // exact match (===) doesn't work here
             if (message == 'pong') {
                 console.log('message was a pong')
@@ -59,11 +58,13 @@ ws.on('close', () => {
 
 const ping = () => {
     setInterval(() => {
-        // console.log('ping')
         Object.keys(clients).forEach((id) => {
             if (clients[id].alive !== true) {
                 console.log(`server terminated connection with client ${clients[id].id} due to lack of response to ping`)
-                return clients[id].terminate()
+                clients[id].terminate()
+                delete clients[id]
+                console.log(Object.keys(clients))
+                return
             }
 
             clients[id].alive = false

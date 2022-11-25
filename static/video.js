@@ -54,9 +54,10 @@ websocket.onmessage = (e) => {
     if (e.data.constructor.name === 'Blob') {
         acceptVideo(e)
     }
+    // pong
     if (e.data === 'ping') {
         console.log('ping')
-        pong()
+        websocket.send('pong')
     }
     if (typeof e.data === 'string' && e.data !== 'ping') {
         joinRoom(e.data)
@@ -110,11 +111,6 @@ const acceptVideo = (e) => {
 const joinRoom = (json) => {
     let connectionString = JSON.parse(json)
     console.log(connectionString)
-}
-
-// client response to heartbeat
-const pong = () => {
-    websocket.send('pong')
 }
 
 const addVideoToPage = (stream) => {
