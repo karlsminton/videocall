@@ -17,6 +17,11 @@ let video, mediaRecorder
 window.externalMediaSource = new MediaSource()
 let startAccepting = false
 
+// clients is full list of clients connected to room
+let clients = []
+// uuid is your unique id in this room
+let uuid
+
 button.addEventListener('click', (e) => {
     if (
         navigator 
@@ -43,7 +48,19 @@ button.addEventListener('click', (e) => {
 })
 
 websocket.onmessage = (e) => {
-    acceptVideo(e)
+    console.log(e.data)
+    // Not the best control flow - need a better way of identifying messages
+    // Nesting a blob in an array doesn't appear to work
+    if (e.data.constructor.name === 'Blob') {
+        acceptVideo(e)
+    }
+    if (e.data === 'ping') {
+        console.log('ping')
+        pong()
+    }
+    if (typeof e.data === 'string' && e.data !== 'ping') {
+        joinRoom(e.data)
+    }
 }
 
 const acceptVideo = (e) => {
@@ -53,7 +70,7 @@ const acceptVideo = (e) => {
     }
 
     let blob = e.data
-    // console.log(blob)
+    console.log(blob)
 
     window.secondVideo = document.createElement('video')
     window.secondVideo.id = 'second'
@@ -88,6 +105,16 @@ const acceptVideo = (e) => {
         document.querySelector('main').appendChild(container)
         window.secondVideo.play()
     }
+}
+
+const joinRoom = (json) => {
+    let connectionString = JSON.parse(json)
+    console.log(connectionString)
+}
+
+// client response to heartbeat
+const pong = () => {
+    websocket.send('pong')
 }
 
 const addVideoToPage = (stream) => {
