@@ -44,6 +44,7 @@ ws.on('connection', (socket, req) => {
                 console.log('message was a pong')
                 socket.alive = true
             } else if (message instanceof Buffer) {
+                // sendAll(['video', message])
                 sendAll(message)
             } else {
                 throw new Error('Message was not a buffer or a pong')
